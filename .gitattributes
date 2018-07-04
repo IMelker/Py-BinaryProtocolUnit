@@ -1,1 +1,2 @@
-libbpu/* linguist-vendored
+libbpu/binary_protocol.cpp linguist-vendored
+libbpu/binary_protocol.h linguist-vendored
