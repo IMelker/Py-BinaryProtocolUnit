@@ -2,7 +2,9 @@ import ctypes
 pybpu = ctypes.cdll.LoadLibrary('./libbpu.so')
 
 class BinaryProtocolUnit(object):
-    def __init__(self):       
+    def __init__(self):     
+        pybpu.BinaryProtocolUnit_New.restype = ctypes.c_void_p
+        
         pybpu.BinaryProtocolUnit_FieldsCount.argtypes = (ctypes.c_void_p,)
         pybpu.BinaryProtocolUnit_FieldsCount.restype = ctypes.c_int
         
@@ -18,19 +20,17 @@ class BinaryProtocolUnit(object):
         pybpu.BinaryProtocolUnit_Remove.argtypes = (ctypes.c_void_p, ctypes.c_char_p)
         pybpu.BinaryProtocolUnit_Remove.restype = ctypes.c_int
         
+        pybpu.BinaryProtocolUnit_Clear.argtypes = (ctypes.c_void_p, )
+        pybpu.BinaryProtocolUnit_Clear.restype = ctypes.c_void_p
+        
         pybpu.BinaryProtocolUnit_FromBinary.argtypes = (ctypes.c_void_p, ctypes.c_char_p, ctypes.c_int)
         pybpu.BinaryProtocolUnit_FromBinary.restype = ctypes.c_void_p
         
-        pybpu.BinaryProtocolUnit_ToBinary.argtypes = (ctypes.c_void_p,)
-        pybpu.BinaryProtocolUnit_ToBinary.restype = ctypes.c_char_p
+        pybpu.BinaryProtocolUnit_ToBinary.argtypes = (ctypes.c_void_p, ctypes.c_char_p)
+        pybpu.BinaryProtocolUnit_ToBinary.restype = ctypes.c_size_t
+        
         self.obj = pybpu.BinaryProtocolUnit_New()
     
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        pybpu.BinaryProtocolUnit_Del(self.obj)
-            
     def FieldsCount(self):
         return pybpu.BinaryProtocolUnit_FieldsCount(self.obj)
         
@@ -45,9 +45,14 @@ class BinaryProtocolUnit(object):
         
     def Remove(self, key):
         return pybpu.BinaryProtocolUnit_Remove(self.obj, key)
+    
+    def Clear(self):
+        pybpu.BinaryProtocolUnit_Clear(self.obj)
         
-    def FromBinary(self, data, size):
-        pybpu.BinaryProtocolUnit_FromBinary(self.obj, data, size)
+    def FromBinary(self, data):
+        pybpu.BinaryProtocolUnit_FromBinary(self.obj, data, len(data))
         
     def ToBinary(self):
-        return pybpu.BinaryProtocolUnit_ToBinary(self.obj)
+        buf = ctypes.create_string_buffer(1024*1024)
+        length = pybpu.BinaryProtocolUnit_ToBinary(self.obj, buf)
+        return buf.raw[:length]

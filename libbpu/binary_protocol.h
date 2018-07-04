@@ -14,6 +14,7 @@ public:
     bool IsInserted(const std::string& key) const;
     std::string Get(const std::string& key) const;
     int Remove(const std::string& key);
+    void Clear();
     void FromBinary(const char* data, size_t size);
     std::string ToBinary() const;
 private:
