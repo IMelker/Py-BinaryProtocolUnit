@@ -1,5 +1,5 @@
 # Py-BinaryProtocolUnit
-Wrapper for `std::map&lt;std::string, std::string>`  with serialisation to binary. Shared library to python using `ctypes`.
+Wrapper for `std::map<std::string, std::string>`  with serialisation to binary. Shared library to python using `ctypes`.
 
 # Instalation
 First of all you need to compile cpp shared lib, that provides wrapper.
